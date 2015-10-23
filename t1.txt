@@ -1,2 +1,2 @@
-
+a heading
 This is a test of git.
