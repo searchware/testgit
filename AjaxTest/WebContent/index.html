@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Ajax Testing Code</title>
+</head>
+<body>
+	<ul>
+		<li><a href="HelloHTML">This is simple Servlet returning HTML...</a></li>
+		<li><a href="ajax1.html">This is simple ajax loading HTML on page ready...</a></li>
+		<li><a id="click1" name="load Ref 2">This is simple ajax loading JSON on click...</a></li>
+	</ul>
+	<form id="login">
+		<p>用户名：<input type="text" name="user" /></p>
+		<p><input type="button" id="load1" value="Submit to Ajax..." /></p>
+	</form>
+	<input type="button" id="load2" name="load button 2" value="Simple Submit to Ajax JSON..." />
+	<form id="getData">
+		<p>ID:&nbsp<input type="text" name="id" /></p>
+		<p><input type="button" id="load3" value="Get the table data by ID using Ajax..." /></p>
+	</form>
+	<hr />
+	<div id="show"></div>
+	<table border="1" id="data">
+		<tr>
+			<th width="100">姓名</th>
+			<th width="50">年龄</th>
+		</tr>
+	</table>
+<script type="text/javascript" src="jquery-1.8.0.js"></script>
+<script type="text/javascript">
+	$("#load1").click(function()
+	{
+		$("#show").load("HelloAjax1", $("#login").serializeArray());
+	});
+	//GET方法加载服务器内容  
+	$('#load2,#click1').click(function()
+	{  
+		var requestData = {click:$(this).attr("name")};  
+	    $.getJSON("HelloAjax2", requestData, function(data){             
+	    	//返回的数据包结构：  
+	    	//{"input":"...", "output":"..."}  
+	    	//先将返回的数据包拆包  
+	    	var responseObj = eval(data);
+	    	var html = "";
+	    	html += "<h3>Input : "+responseObj.input+"</h3>";
+	    	html += "<h3>Output : "+responseObj.output+"</h3>";
+	    	$("#show").empty().html(html);
+	    });
+	    return false;
+	});
+	//POST方法加载服务器内容  
+	$('#load3').click(function()
+	{
+		// post()方式
+	    /*$.post("HelloAjax2", $("#getData").serializeArray(), function(data){             
+	    	//返回的数据包结构：  
+	    	//[{"name":"...", "age":"..."}, {"name":"...", "age":"..."}]
+	    	//先将返回的数据包拆包  
+    		var html = '<tr><th width="100">姓名</th><th width="50">年龄</th></tr>';
+	    	if (data) {
+	    		var responseObj = eval(data);
+	    		$.each(responseObj, function(index, item) {
+	    			html += "<tr><td>"+item.name+"</td><td>"+item.age+"</td></tr>";
+	    		});
+	    	}
+	    	$("#data").empty().append(html);
+	    },
+    	"json");*/
+		// ajax()方式，这种写法更不容易出错。
+		$.ajax({
+			url: "HelloAjax2",
+			data: $("#getData").serializeArray(),
+			type: "POST",
+		    dataType: "json",
+			success:
+				function(data){             
+		    		//返回的数据包结构：  
+		    		//[{"name":"...", "age":"..."}, {"name":"...", "age":"..."}]
+		    		//先将返回的数据包拆包  
+	    			var html = '<tr><th width="100">姓名</th><th width="50">年龄</th></tr>';
+		    		if (data) {
+		    			var responseObj = eval(data);
+		    			$.each(responseObj, function(index, item) {
+		    				html += "<tr><td>"+item.name+"</td><td>"+item.age+"</td></tr>";
+		    			});
+		    		}
+		    		$("#data").empty().append(html);
+		    	}
+		});
+	    return false;
+	});
+</script>
+</body>
+</html>
